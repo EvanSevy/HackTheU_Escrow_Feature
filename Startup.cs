@@ -26,6 +26,7 @@ namespace HackTheU_Escrow_Feature
         {
             services.AddDbContext<EscrowDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<EscrowDbContext>().AddDefaultTokenProviders();
+            services.AddScoped<IEscrowAccountRepository, EscrowAccountRepository>();
             services.AddControllersWithViews();
             // In production, the Angular Configurefiles will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -76,7 +77,8 @@ namespace HackTheU_Escrow_Feature
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseAngularCliServer(npmScript: "start");
+                    //spa.UseAngularCliServer(npmScript: "start");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });
         }
