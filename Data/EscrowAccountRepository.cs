@@ -24,27 +24,22 @@ namespace HackTheU_Escrow_Feature.Data
         {
             var ApiUrl = configuration.GetValue<string>("Galileo:url");
 
+            // Note:  This returns valid tokens
             LoginTokens tokens = await GetTokens();
 
+            // Note:  This returns valid agreements
             AgreementsInfo agreements = await GetAgreements(tokens.Access_Token);
 
+            // Note:  Having trouble with the final POST to actually create the cardholder
             int cardholder_id = await CreateCardHolder(tokens.Access_Token, agreements, username);
 
             return true;
-            //httpClient.BaseAddress = new System.Uri(ApiUrl);
-            //httpClient.PostAsync(httpClient.BaseAddress + "/login", )
         }
         public async Task<LoginTokens> GetTokens()
         {
             var ApiUsername = configuration.GetValue<string>("Galileo:username");
             var ApiPassword = configuration.GetValue<string>("Galileo:password");
             var ApiUrl = configuration.GetValue<string>("Galileo:url");
-
-
-            //        HttpStringContent content = new HttpStringContent(
-            //"{ \"username\": \"Eliot\"  }",
-            //UnicodeEncoding.UTF8,
-            //"application/json");
 
             using (var httpClient = new HttpClient())
             {
@@ -97,38 +92,6 @@ namespace HackTheU_Escrow_Feature.Data
             var ApiProductId = configuration.GetValue<string>("Galileo:product_id");
             using (var httpClient = new HttpClient())
             {
-                //var values = new Dictionary<string, object>
-                //{
-                //    { "cardholder", new CardHolder()
-                //    {
-                //        Address = new Address()
-                //        {
-                //            City = "Layton",
-                //            State = "Utah",
-                //            Street = "123 St.",
-                //            Zip_Code = "84040"
-                //        },
-                //        Agreements = agreements.SelectMany(s => s.Agreements).Select(s => s.Agreement_Id),
-                //        Email = "Awesome@Email.com",
-                //        First_Name = username,
-                //        Identification = new Identification()
-                //        {
-                //            Date_Of_Birth = "2000-01-01",
-                //            Id = "123456222",
-                //            Id_Type = "ssn"
-                //        },
-                //        Income = new Income()
-                //        {
-                //            Amount = "u1000000k",
-                //            Frequency = "biweekly",
-                //            Occupation = "information_technology",
-                //            Source = "entrepreneurial"
-                //        },
-                //        Last_Name = username,
-                //        Mobile = "1234567111"
-                //    } },
-                //    { "product_id", Int32.Parse(ApiProductId) }
-                //};
                 var values = new CreateCardHolder()
                 {
                     CardHolder = new CardHolder()
@@ -140,7 +103,7 @@ namespace HackTheU_Escrow_Feature.Data
                             Street = "123 St.",
                             Zip_Code = "84040"
                         },
-                        Agreements = agreements.Agreements.Select(s => s.Agreement_Id),
+                        Agreements = agreements.Agreements.Select(s => s.Agreement_Id).ToArray(),
                         Email = "Awesome@Email.com",
                         First_Name = username,
                         Identification = new Identification()
@@ -165,10 +128,16 @@ namespace HackTheU_Escrow_Feature.Data
                 var contentData = new StringContent(stringData, System.Text.Encoding.UTF8, "application/json"); ;
 
                 httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
-                var response = await httpClient.PostAsync(ApiUrl + "/cardholders", contentData);
 
-                var responseInt = JsonSerializer.Deserialize<int>(response.Content.ReadAsStringAsync().Result);
-                return responseInt;
+                // To Do:  Left off here: Having trouble with this Post not returning an error...
+                var response = await httpClient.PostAsync(ApiUrl + "/cardholders", contentData);
+                //var response = await httpClient.PostAsync(ApiUrl + "/cardholders", values, new JsonMediaTypeFormatter());
+                //HttpResponseMessage response = httpClient.PutAsync(ApiUrl, contentData).Result;
+
+                var responseContent = response.Content;
+
+                var responseInt = JsonSerializer.Deserialize<CardHolderId>(response.Content.ReadAsStringAsync().Result);
+                return responseInt.Cardholder_Id;
             }
         }
     }
