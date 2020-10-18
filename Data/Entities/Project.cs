@@ -14,5 +14,6 @@ namespace HackTheU_Escrow_Feature.Data.Entities
         public double MoneyThresholdForRelease { get; set; }
         public double CurrentMoneyDonated { get; set; }
         public User MoneyTrustee { get; set; }
+        public GalileoAccount GalileoAccount { get; set; }
     }
 }

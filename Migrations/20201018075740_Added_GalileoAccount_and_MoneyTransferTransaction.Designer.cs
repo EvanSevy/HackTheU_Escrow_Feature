@@ -4,14 +4,16 @@ using HackTheU_Escrow_Feature.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HackTheU_Escrow_Feature.Migrations
 {
     [DbContext(typeof(EscrowDbContext))]
-    partial class EscrowDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201018075740_Added_GalileoAccount_and_MoneyTransferTransaction")]
+    partial class Added_GalileoAccount_and_MoneyTransferTransaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

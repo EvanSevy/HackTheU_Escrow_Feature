@@ -13,6 +13,7 @@ namespace HackTheU_Escrow_Feature.Data.Entities
             ProjectCreations = new List<Project>();
             MoneyForProjects = new List<ProjectMoney>();
         }
+        public GalileoAccount GalileoAccount { get; set; }
         public ICollection<Project> ProjectCreations { get; set; }
         public ICollection<ProjectMoney> MoneyForProjects { get; set; }
     }
